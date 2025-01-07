@@ -18,4 +18,8 @@ class HTMLNode:
         content = self.value
         if self.value == None:
             content = str(self.children)
+            
+        if self.tag == None:
+            return self.value
+        
         return f"<{self.tag}{self.props_to_html()}>{content}</{self.tag}>"

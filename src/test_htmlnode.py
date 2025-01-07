@@ -3,7 +3,7 @@ import unittest
 from htmlnode import HTMLNode
 
 
-class TestTextNode(unittest.TestCase):
+class TestHTMLNode(unittest.TestCase):
     def test_p_prints_correctly(self):
         node = HTMLNode("p", "This is paragraph text")
         self.assertEqual(str(node), "<p>This is paragraph text</p>")

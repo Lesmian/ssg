@@ -15,11 +15,4 @@ class HTMLNode:
         return " " + " ".join(map(lambda tuple: f'{tuple[0]}="{tuple[1]}"', self.props.items()))
     
     def __repr__(self):
-        content = self.value
-        if self.value == None:
-            content = str(self.children)
-            
-        if self.tag == None:
-            return self.value
-        
-        return f"<{self.tag}{self.props_to_html()}>{content}</{self.tag}>"
+        return self.to_html()

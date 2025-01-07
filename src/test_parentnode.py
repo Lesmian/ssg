@@ -4,7 +4,7 @@ from leafnode import LeafNode
 from parentnode import ParentNode
 
 
-class TestLeafNode(unittest.TestCase):
+class TestParentNode(unittest.TestCase):
     def test_to_html_raises_error_if_no_tag(self):
         leafNode = LeafNode("p", "This is just paragraph text", {"id": "1"})
         parentNode = ParentNode(None, leafNode)

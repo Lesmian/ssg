@@ -1,7 +1,7 @@
 import unittest
 
 from textnode import TextNode, TextType
-from utils import split_nodes_delimiter
+from utils import extract_markdown_images, extract_markdown_links, split_nodes_delimiter
 
 
 class TestUtils(unittest.TestCase):
@@ -57,6 +57,48 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(result[1].text, "is")
         self.assertEqual(result[2].text_type, TextType.TEXT)
         self.assertEqual(result[2].text, " just `text`")
+
+    def test_extract_markdown_images_return_empty_list_when_no_img_in_text(self):
+        text = "This is text with no img"
+        result = extract_markdown_images(text)
+        self.assertEqual(len(result), 0)
+
+    def test_extract_markdown_images_works_for_single_img(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) img"
+        result = extract_markdown_images(text)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0][0], "rick roll")
+        self.assertEqual(result[0][1], "https://i.imgur.com/aKaOqIh.gif")
+
+    def test_extract_markdown_images_works_for_multiple_imgs(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        result = extract_markdown_images(text)
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0][0], "rick roll")
+        self.assertEqual(result[0][1], "https://i.imgur.com/aKaOqIh.gif")
+        self.assertEqual(result[1][0], "obi wan")
+        self.assertEqual(result[1][1], "https://i.imgur.com/fJRm4Vk.jpeg")
+
+    def test_extract_markdown_links_return_empty_list_when_no_link_in_text(self):
+        text = "This is text with no link"
+        result = extract_markdown_links(text)
+        self.assertEqual(len(result), 0)
+
+    def test_extract_markdown_links_works_for_single_img(self):
+        text = "This is text with a link [to boot dev](https://www.boot.dev)!"
+        result = extract_markdown_links(text)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0][0], "to boot dev")
+        self.assertEqual(result[0][1], "https://www.boot.dev")
+
+    def test_extract_markdown_links_works_for_multiple_imgs(self):
+        text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+        result = extract_markdown_links(text)
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0][0], "to boot dev")
+        self.assertEqual(result[0][1], "https://www.boot.dev")
+        self.assertEqual(result[1][0], "to youtube")
+        self.assertEqual(result[1][1], "https://www.youtube.com/@bootdotdev")
 
 
 if __name__ == "__main__":

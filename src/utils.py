@@ -26,6 +26,48 @@ def split_node(text, delimiter, text_type):
     
     return result
 
+def split_nodes_image(old_nodes):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type == TextType.TEXT:
+            images = extract_markdown_images(node.text)
+            input_text = node.text
+            for img in images:
+                markdown = f"![{img[0]}]({img[1]})"
+                (nodes, new_Text) = split_node_markdown(img, input_text, markdown, TextType.IMAGE)
+                new_nodes.extend(nodes)
+                input_text = new_Text
+            if len(input_text) > 0:
+                new_nodes.append(TextNode(input_text, TextType.TEXT))
+        else:
+            new_nodes.append(node)
+    return new_nodes
+
+def split_nodes_link(old_nodes):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type == TextType.TEXT:
+            links = extract_markdown_links(node.text)
+            input_text = node.text
+            for link in links:
+                markdown = f"[{link[0]}]({link[1]})"
+                (nodes, new_Text) = split_node_markdown(link, input_text, markdown, TextType.LINK)
+                new_nodes.extend(nodes)
+                input_text = new_Text
+            if len(input_text) > 0:
+                new_nodes.append(TextNode(input_text, TextType.TEXT))
+        else:
+            new_nodes.append(node)
+    return new_nodes
+
+def split_node_markdown(img, text, markdown, type):
+    nodes = []
+    index = text.find(markdown)
+    if index > 0:
+        nodes.append(TextNode(text[:index], TextType.TEXT))
+    nodes.append(TextNode(img[0], type, img[1]))
+    return nodes, text[index + len(markdown):]
+
 def extract_markdown_images(text):
     return re.findall(r"!\[(.*?)\]\((.+?)\)", text)
 

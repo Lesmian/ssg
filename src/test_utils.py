@@ -1,7 +1,7 @@
 import unittest
 
 from textnode import TextNode, TextType
-from utils import extract_markdown_images, extract_markdown_links, split_nodes_delimiter
+from utils import extract_markdown_images, extract_markdown_links, split_nodes_delimiter, split_nodes_image, split_nodes_link
 
 
 class TestUtils(unittest.TestCase):
@@ -99,6 +99,89 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(result[0][1], "https://www.boot.dev")
         self.assertEqual(result[1][0], "to youtube")
         self.assertEqual(result[1][1], "https://www.youtube.com/@bootdotdev")
+
+    def test_split_nodes_image_returns_text_if_no_img(self):
+        text = TextNode("This is just text", TextType.TEXT)
+        result = split_nodes_image([text])
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].text_type, TextType.TEXT)
+        self.assertEqual(result[0].text, "This is just text")
+
+    def test_split_nodes_image_returns_img_if_no_text(self):
+        text = TextNode("![rick roll](https://i.imgur.com/aKaOqIh.gif)", TextType.TEXT)
+        result = split_nodes_image([text])
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].text_type, TextType.IMAGE)
+        self.assertEqual(result[0].text, "rick roll")
+        self.assertEqual(result[0].url, "https://i.imgur.com/aKaOqIh.gif")
+
+    def test_split_nodes_image_returns_text_and_img_for_single_img(self):
+        text = TextNode("This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) img", TextType.TEXT)
+        result = split_nodes_image([text])
+        self.assertEqual(len(result), 3)
+        self.assertEqual(result[0].text_type, TextType.TEXT)
+        self.assertEqual(result[0].text, "This is text with a ")
+        self.assertEqual(result[1].text_type, TextType.IMAGE)
+        self.assertEqual(result[1].text, "rick roll")
+        self.assertEqual(result[1].url, "https://i.imgur.com/aKaOqIh.gif")
+        self.assertEqual(result[2].text_type, TextType.TEXT)
+        self.assertEqual(result[2].text, " img")
+
+    def test_split_nodes_image_returns_text_and_img_for_multiple_img(self):
+        text = TextNode("This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", TextType.TEXT)
+        result = split_nodes_image([text])
+        self.assertEqual(len(result), 4)
+        self.assertEqual(result[0].text_type, TextType.TEXT)
+        self.assertEqual(result[0].text, "This is text with a ")
+        self.assertEqual(result[1].text_type, TextType.IMAGE)
+        self.assertEqual(result[1].text, "rick roll")
+        self.assertEqual(result[1].url, "https://i.imgur.com/aKaOqIh.gif")
+        self.assertEqual(result[2].text_type, TextType.TEXT)
+        self.assertEqual(result[2].text, " and ")
+        self.assertEqual(result[3].text_type, TextType.IMAGE)
+        self.assertEqual(result[3].text, "obi wan")
+        self.assertEqual(result[3].url, "https://i.imgur.com/fJRm4Vk.jpeg")
+
+    def test_split_nodes_link_returns_text_if_no_link(self):
+        text = TextNode("This is just text", TextType.TEXT)
+        result = split_nodes_link([text])
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].text_type, TextType.TEXT)
+        self.assertEqual(result[0].text, "This is just text")
+
+    def test_split_nodes_link_returns_link_if_no_text(self):
+        text = TextNode("[to boot dev](https://www.boot.dev)", TextType.TEXT)
+        result = split_nodes_link([text])
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].text_type, TextType.LINK)
+        self.assertEqual(result[0].text, "to boot dev")
+        self.assertEqual(result[0].url, "https://www.boot.dev")
+
+    def test_split_nodes_link_returns_text_and_link_for_single_link(self):
+        text = TextNode("This is text with a link [to boot dev](https://www.boot.dev)!", TextType.TEXT)
+        result = split_nodes_link([text])
+        self.assertEqual(len(result), 3)
+        self.assertEqual(result[0].text_type, TextType.TEXT)
+        self.assertEqual(result[0].text, "This is text with a link ")
+        self.assertEqual(result[1].text_type, TextType.LINK)
+        self.assertEqual(result[1].text, "to boot dev")
+        self.assertEqual(result[1].url, "https://www.boot.dev")
+        self.assertEqual(result[2].text_type, TextType.TEXT)
+        self.assertEqual(result[2].text, "!")
+
+    def test_split_nodes_link_returns_text_and_link_for_multiple_link(self):
+        text = TextNode("This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)", TextType.TEXT)
+        result = split_nodes_link([text])
+        self.assertEqual(len(result), 4)
+        self.assertEqual(result[0].text_type, TextType.TEXT)
+        self.assertEqual(result[0].text, "This is text with a link ")
+        self.assertEqual(result[1].text, "to boot dev")
+        self.assertEqual(result[1].url, "https://www.boot.dev")
+        self.assertEqual(result[2].text_type, TextType.TEXT)
+        self.assertEqual(result[2].text, " and ")
+        self.assertEqual(result[3].text_type, TextType.LINK)
+        self.assertEqual(result[3].text, "to youtube")
+        self.assertEqual(result[3].url, "https://www.youtube.com/@bootdotdev")
 
 
 if __name__ == "__main__":

@@ -30,4 +30,9 @@ def text_to_textnodes(text):
     nodes = split_nodes_link(nodes)
     return nodes
 
+def markdown_to_blocks(markdown):
+    blocks = markdown.split("\n")
+    blocks = filter(lambda x: x != "", blocks)
+    return list(map(lambda x: x.strip(), blocks))
+
 main()

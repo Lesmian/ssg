@@ -1,6 +1,6 @@
 import unittest
 
-from main import text_node_to_html_node
+from main import text_node_to_html_node, text_to_textnodes
 from textnode import TextNode, TextType
 
 
@@ -38,6 +38,38 @@ class TestMain(unittest.TestCase):
         text = TextNode("This is image text", TextType.IMAGE, "https://google.com/test.png")
         result = text_node_to_html_node(text)
         self.assertEqual(str(result), '<img src="https://google.com/test.png" alt="This is image text"></img>')
+
+    def test_text_to_textnodes_return_single_node_for_just_text(self):
+        result = text_to_textnodes("This is just text")
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].text_type, TextType.TEXT)
+        self.assertEqual(result[0].text, "This is just text")
+
+    def test_text_to_textnodes_parses_text_with_multiple_markdown_sections(self):
+        result = text_to_textnodes("This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)")
+        self.assertEqual(len(result), 10)
+        self.assertEqual(result[0].text_type, TextType.TEXT)
+        self.assertEqual(result[0].text, "This is ")
+        self.assertEqual(result[1].text_type, TextType.BOLD)
+        self.assertEqual(result[1].text, "text")
+        self.assertEqual(result[2].text_type, TextType.TEXT)
+        self.assertEqual(result[2].text, " with an ")
+        self.assertEqual(result[3].text_type, TextType.ITALIC)
+        self.assertEqual(result[3].text, "italic")
+        self.assertEqual(result[4].text_type, TextType.TEXT)
+        self.assertEqual(result[4].text, " word and a ")
+        self.assertEqual(result[5].text_type, TextType.CODE)
+        self.assertEqual(result[5].text, "code block")
+        self.assertEqual(result[6].text_type, TextType.TEXT)
+        self.assertEqual(result[6].text, " and an ")
+        self.assertEqual(result[7].text_type, TextType.IMAGE)
+        self.assertEqual(result[7].text, "obi wan image")
+        self.assertEqual(result[7].url, "https://i.imgur.com/fJRm4Vk.jpeg")
+        self.assertEqual(result[8].text_type, TextType.TEXT)
+        self.assertEqual(result[8].text, " and a ")
+        self.assertEqual(result[9].text_type, TextType.LINK)
+        self.assertEqual(result[9].text, "link")
+        self.assertEqual(result[9].url, "https://boot.dev")
 
 if __name__ == "__main__":
     unittest.main()

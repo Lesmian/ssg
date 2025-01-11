@@ -1,5 +1,6 @@
 from leafnode import LeafNode
 from textnode import *
+from utils import split_nodes_delimiter, split_nodes_image, split_nodes_link
 
 def main():
     pass
@@ -20,5 +21,13 @@ def text_node_to_html_node(text_node):
             return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
         case _:
             raise Exception("Unknown text type")
+        
+def text_to_textnodes(text):
+    nodes = split_nodes_delimiter([TextNode(text, TextType.TEXT)], "**", TextType.BOLD)
+    nodes = split_nodes_delimiter(nodes, "*", TextType.ITALIC)
+    nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
+    nodes = split_nodes_image(nodes)
+    nodes = split_nodes_link(nodes)
+    return nodes
 
 main()

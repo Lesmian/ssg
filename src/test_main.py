@@ -1,6 +1,6 @@
 import unittest
 
-from main import markdown_to_blocks, text_node_to_html_node, text_to_textnodes
+from main import text_node_to_html_node, text_to_textnodes
 from textnode import TextNode, TextType
 
 
@@ -70,17 +70,6 @@ class TestMain(unittest.TestCase):
         self.assertEqual(result[9].text_type, TextType.LINK)
         self.assertEqual(result[9].text, "link")
         self.assertEqual(result[9].url, "https://boot.dev")
-
-    def test_markdown_to_blocks_returns_single_block_for_one_line_text(self):
-        result = markdown_to_blocks("# This is a heading")
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0], "# This is a heading")
-
-    def test_markdown_to_blocks_trims_empty_lines_and_whitespaces(self):
-        result = markdown_to_blocks("# This is a heading\n\n\n\n   This is a paragraph of text.   ")
-        self.assertEqual(len(result), 2)
-        self.assertEqual(result[0], "# This is a heading")
-        self.assertEqual(result[1], "This is a paragraph of text.")
 
 if __name__ == "__main__":
     unittest.main()

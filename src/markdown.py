@@ -1,7 +1,8 @@
 from blocks import block_to_block_type, markdown_to_blocks
 from htmlnode import HTMLNode
-from main import text_node_to_html_node, text_to_textnodes
 import re
+
+from utils import text_node_to_html_node, text_to_textnodes
 
 def markdown_to_html_node(markdown):
     blocks = markdown_to_blocks(markdown)

@@ -1,9 +1,19 @@
 import re
 
 def markdown_to_blocks(markdown):
-    blocks = markdown.split("\n")
-    blocks = filter(lambda x: x != "", blocks)
-    return list(map(lambda x: x.strip(), blocks))
+    lines = markdown.split("\n")
+    blocks = []
+    currentBlockLines = []
+    for line in lines:
+        if line == "" and len(currentBlockLines) > 0:
+            blocks.append("\n".join(currentBlockLines))
+            currentBlockLines = []
+        elif line != "" :
+            currentBlockLines.append(line.strip())
+            
+    if len(currentBlockLines) > 0:
+        blocks.append("\n".join(currentBlockLines))
+    return blocks
 
 def block_to_block_type(block):
     if re.match(r"^#{1,6} .+", block):

@@ -15,6 +15,11 @@ class TestBlocks(unittest.TestCase):
         self.assertEqual(result[0], "# This is a heading")
         self.assertEqual(result[1], "This is a paragraph of text.")
 
+    def test_markdown_to_blocks_keeps_multiline_blocks_together(self):
+        result = markdown_to_blocks(">This is a quote\n>This is next line of same quote.")
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0], ">This is a quote\n>This is next line of same quote.")
+
     def test_block_to_block_type_recognizes_paragraphs(self):
         result = block_to_block_type("This is just paragraph")
         self.assertEqual(result, "paragraph")

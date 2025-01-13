@@ -36,7 +36,7 @@ class TestMarkdown(unittest.TestCase):
         result = markdown_to_html_node(">Some quote\n>Second line of quote")
         self.assertEqual(result.tag, "div")
         self.assertEqual(len(result.children), 1)
-        self.assertEqual(result.children[0].tag, "quote")
+        self.assertEqual(result.children[0].tag, "blockquote")
         self.assertEqual(len(result.children[0].children), 1)
         self.assertEqual(result.children[0].children[0].tag, None)
         self.assertEqual(result.children[0].children[0].value, "Some quote\nSecond line of quote")

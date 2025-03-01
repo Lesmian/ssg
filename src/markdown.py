@@ -42,7 +42,8 @@ def block_to_code(block):
 
 def block_to_quote(block):
     lines = block.split("\n")
-    code = "".join(map(lambda x: x[1:], lines))
+    linwa = filter(lambda x: len(x) != 0, lines)
+    code = " ".join(map(lambda x: x[1:].strip(), lines))
     return ParentNode("blockquote", children=text_to_children(code.strip()))
 
 def block_to_unordered_list(block):

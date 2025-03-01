@@ -41,15 +41,15 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(result[3].text, "text")
 
     def test_split_nodes_delimiter_handles_node_with_just_italic_text(self):
-        text = TextNode("*This is just text*", TextType.TEXT)
-        result = split_nodes_delimiter([text], "*", TextType.ITALIC)
+        text = TextNode("_This is just text_", TextType.TEXT)
+        result = split_nodes_delimiter([text], "_", TextType.ITALIC)
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].text_type, TextType.ITALIC)
         self.assertEqual(result[0].text, "This is just text")
 
     def test_split_nodes_delimiter_handles_node_with_different_inline_elements(self):
-        text = TextNode("This *is* just `text`", TextType.TEXT)
-        result = split_nodes_delimiter([text], "*", TextType.ITALIC)
+        text = TextNode("This _is_ just `text`", TextType.TEXT)
+        result = split_nodes_delimiter([text], "_", TextType.ITALIC)
         self.assertEqual(len(result), 3)
         self.assertEqual(result[0].text_type, TextType.TEXT)
         self.assertEqual(result[0].text, "This ")
@@ -224,7 +224,7 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(result[0].text, "This is just text")
 
     def test_text_to_textnodes_parses_text_with_multiple_markdown_sections(self):
-        result = text_to_textnodes("This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)")
+        result = text_to_textnodes("This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)")
         self.assertEqual(len(result), 10)
         self.assertEqual(result[0].text_type, TextType.TEXT)
         self.assertEqual(result[0].text, "This is ")

@@ -1,6 +1,6 @@
 import unittest
 
-from maze import Maze
+from main import extract_title
 
 
 class TestMain(unittest.TestCase):
